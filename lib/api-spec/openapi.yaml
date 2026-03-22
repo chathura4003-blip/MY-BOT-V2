@@ -1,22 +1,32 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: WhatsApp Bot Admin Panel API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: auth
+    description: Authentication
+  - name: stats
+    description: Bot statistics
+  - name: sessions
+    description: WhatsApp session management
+  - name: broadcast
+    description: Broadcast messaging
+  - name: settings
+    description: Bot settings
+  - name: logs
+    description: Bot logs
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,7 +34,246 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /auth/login:
+    post:
+      operationId: login
+      tags: [auth]
+      summary: Admin login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResponse"
+        "401":
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /stats:
+    get:
+      operationId: getStats
+      tags: [stats]
+      summary: Get bot statistics
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Statistics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BotStats"
+
+  /sessions:
+    get:
+      operationId: getSessions
+      tags: [sessions]
+      summary: Get all sessions
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: List of sessions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Session"
+    post:
+      operationId: createSession
+      tags: [sessions]
+      summary: Create a new session
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateSessionRequest"
+      responses:
+        "200":
+          description: Session created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Session"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /sessions/{id}:
+    delete:
+      operationId: deleteSession
+      tags: [sessions]
+      summary: Delete a session
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Session deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /sessions/{id}/reconnect:
+    post:
+      operationId: reconnectSession
+      tags: [sessions]
+      summary: Reconnect a session
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Reconnect initiated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /sessions/{id}/logout:
+    post:
+      operationId: logoutSession
+      tags: [sessions]
+      summary: Logout a session
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Logout successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /broadcast:
+    post:
+      operationId: sendBroadcast
+      tags: [broadcast]
+      summary: Send broadcast message
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BroadcastRequest"
+      responses:
+        "200":
+          description: Broadcast result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BroadcastResult"
+
+  /settings:
+    get:
+      operationId: getSettings
+      tags: [settings]
+      summary: Get bot settings
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Current settings
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BotSettings"
+    post:
+      operationId: updateSettings
+      tags: [settings]
+      summary: Update bot settings
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BotSettings"
+      responses:
+        "200":
+          description: Settings updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /logs:
+    get:
+      operationId: getLogs
+      tags: [logs]
+      summary: Get recent bot logs
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: List of log entries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/LogEntry"
+
+  /bot/restart:
+    post:
+      operationId: restartBot
+      tags: [settings]
+      summary: Restart the bot
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Restart queued
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
   schemas:
     HealthStatus:
       type: object
@@ -34,3 +283,239 @@ components:
       required:
         - status
 
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
+
+    SuccessResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+        message:
+          type: string
+      required:
+        - ok
+
+    LoginRequest:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+      required:
+        - username
+        - password
+
+    LoginResponse:
+      type: object
+      properties:
+        token:
+          type: string
+        username:
+          type: string
+      required:
+        - token
+        - username
+
+    BotStats:
+      type: object
+      properties:
+        status:
+          type: string
+        number:
+          type: string
+          nullable: true
+        connectedAt:
+          type: string
+          nullable: true
+        uptime:
+          type: number
+        memUsed:
+          type: number
+        memTotal:
+          type: number
+        memPercent:
+          type: number
+        cpuLoad:
+          type: string
+        platform:
+          type: string
+        nodeVersion:
+          type: string
+        userCount:
+          type: number
+        fileCount:
+          type: number
+        fileSizeMB:
+          type: string
+        commandsToday:
+          type: number
+        messagesHandled:
+          type: number
+        net:
+          $ref: "#/components/schemas/NetStats"
+      required:
+        - status
+        - uptime
+        - memUsed
+        - memTotal
+        - memPercent
+        - cpuLoad
+        - platform
+        - nodeVersion
+        - userCount
+        - fileCount
+        - fileSizeMB
+        - commandsToday
+        - messagesHandled
+        - net
+
+    NetStats:
+      type: object
+      properties:
+        speedRx:
+          type: string
+        speedTx:
+          type: string
+        totalRx:
+          type: string
+        totalTx:
+          type: string
+      required:
+        - speedRx
+        - speedTx
+        - totalRx
+        - totalTx
+
+    Session:
+      type: object
+      properties:
+        id:
+          type: string
+        label:
+          type: string
+        number:
+          type: string
+          nullable: true
+        status:
+          type: string
+          enum: [Connected, Disconnected, Connecting, "Awaiting QR Scan", "Logged Out", Error, Restoring, Initializing]
+        connectedAt:
+          type: string
+          nullable: true
+        platform:
+          type: string
+          nullable: true
+        isMain:
+          type: boolean
+        qr:
+          type: string
+          nullable: true
+        pairCode:
+          type: string
+          nullable: true
+      required:
+        - id
+        - label
+        - status
+        - isMain
+
+    CreateSessionRequest:
+      type: object
+      properties:
+        id:
+          type: string
+        pairMode:
+          type: boolean
+        phone:
+          type: string
+      required:
+        - id
+
+    BroadcastRequest:
+      type: object
+      properties:
+        message:
+          type: string
+        targets:
+          type: array
+          items:
+            type: string
+      required:
+        - message
+
+    BroadcastResult:
+      type: object
+      properties:
+        sent:
+          type: number
+        failed:
+          type: number
+        total:
+          type: number
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              jid:
+                type: string
+              error:
+                type: string
+            required:
+              - jid
+              - error
+      required:
+        - sent
+        - failed
+        - total
+        - errors
+
+    BotSettings:
+      type: object
+      properties:
+        botName:
+          type: string
+        prefix:
+          type: string
+        ownerNumber:
+          type: string
+        autoRead:
+          type: boolean
+        autoTyping:
+          type: boolean
+        nsfwEnabled:
+          type: boolean
+        premiumCode:
+          type: string
+        maintenanceMode:
+          type: boolean
+        maxSessions:
+          type: number
+
+    LogEntry:
+      type: object
+      properties:
+        id:
+          type: string
+        timestamp:
+          type: string
+        level:
+          type: string
+          enum: [info, warn, error, debug]
+        message:
+          type: string
+        meta:
+          type: string
+          nullable: true
+      required:
+        - id
+        - timestamp
+        - level
+        - message
