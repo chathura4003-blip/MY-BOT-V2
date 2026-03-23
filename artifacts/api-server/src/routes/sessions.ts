@@ -33,7 +33,7 @@ router.post("/sessions", authMiddleware, (req: AdminRequest, res: Response) => {
 });
 
 router.delete("/sessions/:id", authMiddleware, (req: AdminRequest, res: Response) => {
-  const { id } = req.params;
+  const id = req.params.id as string;
   const ok = appState.deleteSession(id);
   if (!ok) {
     res.status(404).json({ error: "Session not found" });
@@ -43,7 +43,7 @@ router.delete("/sessions/:id", authMiddleware, (req: AdminRequest, res: Response
 });
 
 router.post("/sessions/:id/reconnect", authMiddleware, (req: AdminRequest, res: Response) => {
-  const { id } = req.params;
+  const id = req.params.id as string;
   const ok = appState.reconnectSession(id);
   if (!ok) {
     res.status(404).json({ error: "Session not found" });
@@ -53,7 +53,7 @@ router.post("/sessions/:id/reconnect", authMiddleware, (req: AdminRequest, res: 
 });
 
 router.post("/sessions/:id/logout", authMiddleware, (req: AdminRequest, res: Response) => {
-  const { id } = req.params;
+  const id = req.params.id as string;
   const ok = appState.logoutSession(id);
   if (!ok) {
     res.status(404).json({ error: "Session not found" });

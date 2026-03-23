@@ -12,7 +12,10 @@ process.on('unhandledRejection', err => logger(`[UNHANDLED] ${err?.message || er
         startDashboard(getSock);
         await startBot();
     } catch (err) {
-        logger(`[Index] Fatal startup error: ${err.message}`);
-        process.exit(1);
+        logger(`[Index] Startup error: ${err.message}. Will keep running and retry.`);
+        // Do not exit on startup errors - let the bot keep recovering.
+        setTimeout(() => {
+            startBot().catch((e) => logger(`[Index] Retry error: ${e.message}`));
+        }, 5000);
     }
 })();

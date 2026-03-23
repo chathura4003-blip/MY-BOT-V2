@@ -5,7 +5,7 @@ import { format } from "date-fns";
 import { useQueryClient } from "@tanstack/react-query";
 
 export default function Logs() {
-  const { data: logs, isLoading, isFetching } = useGetLogs({ query: { refetchInterval: 5000 } });
+  const { data: logs, isLoading, isFetching } = useGetLogs({ query: { refetchInterval: 5000 } as any });
   const containerRef = useRef<HTMLDivElement>(null);
   const queryClient = useQueryClient();
 

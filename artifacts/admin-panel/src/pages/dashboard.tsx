@@ -31,7 +31,7 @@ function formatMem(mb: number) {
 
 export default function Dashboard() {
   const { data: stats, isLoading, dataUpdatedAt } = useGetStats({
-    query: { refetchInterval: 5000 },
+    query: { refetchInterval: 5000 } as any,
   });
 
   const { data: qrData } = useQuery({
@@ -66,8 +66,9 @@ export default function Dashboard() {
 
   const isConnected = qrData?.connected || stats.status === "Connected";
   const hasPendingQR = !isConnected && qrData?.qr;
-  const cpuPercent = Math.min(100, Math.round(parseFloat(stats.cpuLoad) * 100));
+  const cpuPercent = Math.min(100, Math.round(parseFloat(stats.cpuLoad || "0") * 100));
   const lastUpdate = dataUpdatedAt ? new Date(dataUpdatedAt).toLocaleTimeString() : "—";
+  const netStats = stats.net || { speedRx: "0 KB/s", totalRx: "0 MB", speedTx: "0 KB/s", totalTx: "0 MB" };
 
   return (
     <div className="space-y-5">
@@ -172,7 +173,7 @@ export default function Dashboard() {
         {[
           {
             label: "Commands Today",
-            value: stats.commandsToday.toLocaleString(),
+            value: Number(stats.commandsToday || 0).toLocaleString(),
             icon: Zap,
             color: "text-yellow-400",
             bg: "bg-yellow-500/10",
@@ -182,7 +183,7 @@ export default function Dashboard() {
           },
           {
             label: "Messages Handled",
-            value: stats.messagesHandled.toLocaleString(),
+            value: Number(stats.messagesHandled || 0).toLocaleString(),
             icon: MessageSquare,
             color: "text-pink-400",
             bg: "bg-pink-500/10",
@@ -192,7 +193,7 @@ export default function Dashboard() {
           },
           {
             label: "Known Users",
-            value: stats.userCount.toLocaleString(),
+            value: Number(stats.userCount || 0).toLocaleString(),
             icon: Users,
             color: "text-purple-400",
             bg: "bg-purple-500/10",
@@ -202,7 +203,7 @@ export default function Dashboard() {
           },
           {
             label: "Files Stored",
-            value: `${stats.fileCount}`,
+            value: `${Number(stats.fileCount || 0)}`,
             icon: FileText,
             color: "text-cyan-400",
             bg: "bg-cyan-500/10",
@@ -341,12 +342,12 @@ export default function Dashboard() {
                   Download
                 </p>
                 <p className="text-xl font-bold font-mono text-blue-300 truncate">
-                  {stats.net.speedRx}
+                  {netStats.speedRx}
                 </p>
               </div>
               <div className="text-right flex-shrink-0">
                 <p className="text-xs text-muted-foreground">Total</p>
-                <p className="text-sm font-mono text-muted-foreground/80">{stats.net.totalRx}</p>
+                <p className="text-sm font-mono text-muted-foreground/80">{netStats.totalRx}</p>
               </div>
             </div>
 
@@ -360,12 +361,12 @@ export default function Dashboard() {
                   Upload
                 </p>
                 <p className="text-xl font-bold font-mono text-pink-300 truncate">
-                  {stats.net.speedTx}
+                  {netStats.speedTx}
                 </p>
               </div>
               <div className="text-right flex-shrink-0">
                 <p className="text-xs text-muted-foreground">Total</p>
-                <p className="text-sm font-mono text-muted-foreground/80">{stats.net.totalTx}</p>
+                <p className="text-sm font-mono text-muted-foreground/80">{netStats.totalTx}</p>
               </div>
             </div>
           </div>

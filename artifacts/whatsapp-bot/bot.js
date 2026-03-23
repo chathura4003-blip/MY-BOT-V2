@@ -30,7 +30,18 @@ async function startBot() {
 
   loadCommands();
 
-  return connect();
+  // Keep retrying on startup errors (network/auth, etc.) so the bot does not exit.
+  while (true) {
+    try {
+      await connect();
+      break;
+    } catch (err) {
+      connectionAttempts++;
+      const delay = Math.min(RECONNECT_DELAY * connectionAttempts, 60000);
+      logger(`[Bot] Startup connect failed: ${err.message}. Retrying in ${delay / 1000}s`);
+      await new Promise((resolve) => setTimeout(resolve, delay));
+    }
+  }
 }
 
 async function connect() {

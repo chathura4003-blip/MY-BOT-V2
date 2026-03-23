@@ -260,11 +260,27 @@ function createDashboard(getSock) {
 
 function startDashboard(getSock) {
     const app = createDashboard(getSock);
-    const port = parseInt(process.env.BOT_INTERNAL_PORT) || 9091;
-    app.listen(port, '127.0.0.1', () => {
-        logger(`[Dashboard] Internal API running on port ${port}`);
-    });
-    return app;
+    let port = parseInt(process.env.BOT_INTERNAL_PORT) || 9091;
+
+    const listen = (tryPort) => {
+        const server = app.listen(tryPort, '127.0.0.1', () => {
+            logger(`[Dashboard] Internal API running on port ${tryPort}`);
+        });
+
+        server.on('error', (err) => {
+            if (err.code === 'EADDRINUSE') {
+                logger(`[Dashboard] Port ${tryPort} in use. Trying ${tryPort + 1}...`);
+                listen(tryPort + 1);
+            } else {
+                logger(`[Dashboard] Server error: ${err.message}`);
+                setTimeout(() => listen(tryPort), 5000);
+            }
+        });
+
+        return server;
+    };
+
+    return listen(port);
 }
 
 module.exports = { startDashboard };

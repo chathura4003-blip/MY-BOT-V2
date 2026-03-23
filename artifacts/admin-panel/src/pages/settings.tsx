@@ -125,14 +125,14 @@ export default function Settings() {
                 label="Auto Read Receipts" 
                 description="Automatically mark incoming signals as read"
                 checked={!!formData.autoRead} 
-                onChange={(c) => handleChange('autoRead', c)} 
+                onChange={(c: boolean) => handleChange('autoRead', c)} 
               />
               <div className="h-px w-full bg-white/5" />
               <ToggleRow 
                 label="Simulate Typing" 
                 description="Show typing indicator during process execution"
                 checked={!!formData.autoTyping} 
-                onChange={(c) => handleChange('autoTyping', c)} 
+                onChange={(c: boolean) => handleChange('autoTyping', c)} 
               />
             </div>
           </div>
@@ -148,7 +148,7 @@ export default function Settings() {
                 label="Maintenance Mode" 
                 description="Lock out all external commands"
                 checked={!!formData.maintenanceMode} 
-                onChange={(c) => handleChange('maintenanceMode', c)} 
+                onChange={(c: boolean) => handleChange('maintenanceMode', c)} 
                 warning
               />
               <div className="h-px w-full bg-white/5" />
@@ -156,7 +156,7 @@ export default function Settings() {
                 label="NSFW Filters" 
                 description="Enable explicit content modules"
                 checked={!!formData.nsfwEnabled} 
-                onChange={(c) => handleChange('nsfwEnabled', c)} 
+                onChange={(c: boolean) => handleChange('nsfwEnabled', c)} 
               />
               <div className="h-px w-full bg-white/5" />
               <div className="pt-2">

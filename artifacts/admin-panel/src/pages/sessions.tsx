@@ -27,7 +27,7 @@ export default function Sessions() {
   const [copied, setCopied] = useState(false);
 
   const { data: sessions, isLoading } = useGetSessions({
-    query: { refetchInterval: 6000 },
+    query: { refetchInterval: 6000 } as any,
   });
 
   const { data: qrData, isFetching: qrFetching } = useQuery({

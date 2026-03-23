@@ -222,7 +222,7 @@ router.post("/mods", authMiddleware, async (req: AdminRequest, res: Response) =>
 });
 
 router.delete("/mods/:jid", authMiddleware, async (req: Request, res: Response) => {
-  const result = await proxyDelete(`/mods/${encodeURIComponent(req.params.jid)}`);
+  const result = await proxyDelete(`/mods/${encodeURIComponent(req.params.jid as string)}`);
   if (!result.ok) { res.status(503).json({ error: "Bot offline" }); return; }
   res.json(result.data);
 });
@@ -241,7 +241,7 @@ router.post("/bans", authMiddleware, async (req: AdminRequest, res: Response) =>
 });
 
 router.delete("/bans/:jid", authMiddleware, async (req: Request, res: Response) => {
-  const result = await proxyDelete(`/bans/${encodeURIComponent(req.params.jid)}`);
+  const result = await proxyDelete(`/bans/${encodeURIComponent(req.params.jid as string)}`);
   if (!result.ok) { res.status(503).json({ error: "Bot offline" }); return; }
   res.json(result.data);
 });
