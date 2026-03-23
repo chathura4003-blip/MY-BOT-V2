@@ -15,7 +15,7 @@ export default function Login() {
     mutation: {
       onSuccess: (data) => {
         login(data.token, data.username);
-        toast({ title: "Access Granted", description: "Welcome to NexusBot Core." });
+        toast({ title: "Access Granted", description: "Welcome to CHATHU MD Admin Panel." });
       },
       onError: (error: any) => {
         toast({ 
@@ -53,7 +53,7 @@ export default function Login() {
             <Bot className="w-10 h-10 text-primary" />
           </div>
           <h1 className="font-display text-3xl font-bold tracking-widest text-white text-glow-primary">
-            NEXUS<span className="text-primary">BOT</span>
+            CHATHU<span className="text-primary"> MD</span>
           </h1>
           <p className="font-mono text-sm text-muted-foreground mt-2 flex items-center">
             <Terminal className="w-3 h-3 mr-2" />

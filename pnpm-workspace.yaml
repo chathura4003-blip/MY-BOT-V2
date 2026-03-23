@@ -37,8 +37,11 @@ minimumReleaseAgeExclude:
 
 onlyBuiltDependencies:
   - '@swc/core'
+  - '@whiskeysockets/baileys'
   - esbuild
+  - ffmpeg-static
   - msw
+  - protobufjs
   - unrs-resolver
 
 overrides:

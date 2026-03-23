@@ -31,7 +31,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
         <div className="h-20 flex items-center px-6 border-b border-white/10">
           <Bot className="w-8 h-8 text-primary mr-3" />
           <h1 className="font-display font-bold text-xl tracking-wider text-glow-primary text-white">
-            NEXUS<span className="text-primary">BOT</span>
+            CHATHU<span className="text-primary"> MD</span>
           </h1>
         </div>
 
