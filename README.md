@@ -34,17 +34,17 @@ A powerful, futuristic WhatsApp Bot with a sleek React-based Admin Panel and a r
 pnpm install
 ```
 
-### 3. Development
-Start all services concurrently:
+### 3. Running the Unified Bot
+Everything (Frontend + API) runs on a single port for simplicity.
 ```powershell
 pnpm build
 pnpm run dev
 ```
 
-The services will start on:
-- **Admin Panel**: [http://localhost:3000](http://localhost:3000)
-- **API Server**: [http://localhost:5000](http://localhost:5000)
-- **Bot Core**: [http://localhost:9091](http://localhost:9091)
+Visit the unified dashboard at:
+- **Unified UI + API**: [http://localhost:5000](http://localhost:5000)
+
+*(Note: Bot core runs internally on port 9091)*
 
 ## ☁️ Deployment (Railway)
 
