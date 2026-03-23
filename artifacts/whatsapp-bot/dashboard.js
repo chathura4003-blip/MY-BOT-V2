@@ -222,6 +222,24 @@ function createDashboard(getSock) {
         res.json(results);
     });
 
+    router.post('/pairing-code', async (req, res) => {
+        const sock = getSock?.();
+        if (!sock) return res.status(503).json({ error: 'Bot not running — start the bot first' });
+        if (state.get('connected')) return res.status(400).json({ error: 'Bot is already connected. Logout first to re-link.' });
+        const { phoneNumber } = req.body || {};
+        if (!phoneNumber) return res.status(400).json({ error: 'phoneNumber is required' });
+        const cleaned = phoneNumber.replace(/\D/g, '');
+        if (cleaned.length < 7 || cleaned.length > 15) return res.status(400).json({ error: 'Invalid phone number' });
+        try {
+            const code = await sock.requestPairingCode(cleaned);
+            logger(`[Dashboard] Pairing code requested for ${cleaned}`);
+            res.json({ ok: true, code });
+        } catch (e) {
+            logger(`[Dashboard] Pairing code error: ${e.message}`);
+            res.status(500).json({ error: e.message || 'Failed to generate pairing code' });
+        }
+    });
+
     router.post('/restart', (req, res) => {
         res.json({ ok: true, message: 'Restarting CHATHU MD…' });
         logger('[Dashboard] Restart requested via admin panel.');

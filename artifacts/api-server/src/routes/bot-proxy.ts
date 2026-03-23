@@ -253,4 +253,14 @@ router.get("/qr", authMiddleware, async (_req: AdminRequest, res: Response) => {
   res.json(result.data);
 });
 
+// ── Pairing Code (Link with Phone Number) ──────────────────────────────────
+router.post("/pairing-code", authMiddleware, async (req: AdminRequest, res: Response) => {
+  const result = await proxyPost("/pairing-code", req.body);
+  if (!result.ok) {
+    res.status(503).json({ error: "Bot service is offline — start the bot first" });
+    return;
+  }
+  res.status(result.status).json(result.data);
+});
+
 export default router;
