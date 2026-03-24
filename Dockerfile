@@ -17,16 +17,18 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
 RUN curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp_linux -o /app/yt-dlp \
     && chmod a+rx /app/yt-dlp
 
-# Copy package files and install dependencies
 COPY package.json package-lock.json* ./
 
-RUN npm install --omit=dev --legacy-peer-deps
+ENV PUPPETEER_SKIP_DOWNLOAD=true
 
+RUN apt-get update && apt-get install -y build-essential
+
+RUN npm install --legacy-peer-deps --unsafe-perm=true
 # Copy the rest of the application
 COPY . .
 
 # Ensure session directory exists for persistence
-RUN mkdir -p /app/session /app/downloads
+RUN mkdir -p /app/session 
 
 # Expose the dashboard port
 EXPOSE 5000
