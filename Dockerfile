@@ -19,11 +19,7 @@ RUN curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp_lin
 
 COPY package.json package-lock.json* ./
 
-ENV PUPPETEER_SKIP_DOWNLOAD=true
-
-RUN apt-get update && apt-get install -y build-essential
-
-RUN npm install --legacy-peer-deps --unsafe-perm=true
+RUN pnpm install
 # Copy the rest of the application
 COPY . .
 
